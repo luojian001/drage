@@ -2,51 +2,77 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="./css/index.css">
-    <script type="text/javascript" src="./js/index.js"></script>
     <title>js原生拖动效果</title>
+    <style>
+        #div1 {width: 100px; height: 100px; background: red; position: absolute; z-index: 2;}
+            #img1 { position: absolute; left: 500px; top: 200px;}
+            </style>
+    <script>
+        window.onload = function () {
+
+            var oDiv = document.getElementById('div1');
+            var oImg = document.getElementById('img1');
+
+            drag(oDiv);
+
+            function drag(obj) {
+
+                obj.onmousedown = function (ev) {
+                    var ev = ev || event;
+
+                    var disX = ev.clientX - this.offsetLeft;
+                    var disY = ev.clientY - this.offsetTop;
+
+                    if (obj.setCapture) {
+                        obj.setCapture();
+                    }
+
+                    document.onmousemove = function (ev) {
+                        var ev = ev || event;
+
+                        var L = ev.clientX - disX;
+                        var T = ev.clientY - disY;
+
+                        var L1 = L;
+                        var R1 = L + obj.offsetWidth;
+                        var T1 = T;
+                        var B1 = T + obj.offsetHeight;
+
+                        var L2 = oImg.offsetLeft;
+                        var R2 = L2 + oImg.offsetWidth;
+                        var T2 = oImg.offsetTop;
+                        var B2 = T2 + oImg.offsetHeight;
+
+                        if (R1 < L2 || L1 > R2 || B1 < T2 || T1 > B2) {
+                            oImg.src = './images/new_1.jpg';
+                        } else {
+                            oImg.src = './images/new_3.jpg';
+                        }
+
+                        obj.style.left = L + 'px';
+                        obj.style.top = T + 'px';
+
+                    }
+
+                    document.onmouseup = function () {
+                        document.onmousemove = document.onmouseup = null;
+                        if (obj.releaseCapture) {
+                            obj.releaseCapture();
+                        }
+                    }
+
+                    return false;
+
+                }
+
+            }
+
+        }
+    </script>
 </head>
 
 <body>
-        <div class = "move-container" >
-                <div class = "move" style="position:absolute; width:100px; height:100px; background:gray">
-                    拖动效果
-                </div>
-            </div> 
+        <div id="div1"></div>
+        <img src="./images/new_1.jpg" id="img1" />
 </body>
-<script  type="text/javascript">
-var moveElem = document.querySelector('.move'); //待拖拽元素      
-
-var dragging; //是否激活拖拽状态
-var tLeft, tTop; //鼠标按下时相对于选中元素的位移
-
-//监听鼠标按下事件
-document.addEventListener('mousedown', function(e) {
-    if (e.target == moveElem) {
-        
-        dragging = true; //激活拖拽状态
-       var moveElemRect = moveElem.getBoundingClientRect();
-        tLeft = e.clientX - moveElemRect.left; //鼠标按下时和选中元素的坐标偏移:x坐标
-        tTop = e.clientY - moveElemRect.top; //鼠标按下时和选中元素的坐标偏移:y坐标
-    }
-});
-
-//监听鼠标放开事件
-document.addEventListener('mouseup', function(e) {
-    dragging = false;
-});
-
-//监听鼠标移动事件
-document.addEventListener('mousemove', function(e) {
-    if (dragging) {
-        var moveX = e.clientX - tLeft, 
-              moveY = e.clientY - tTop;
-
-        moveElem.style.left = moveX + 'px';
-        moveElem.style.top = moveY + 'px';
-      
-    }
-});
-</script>
-
 </html>
